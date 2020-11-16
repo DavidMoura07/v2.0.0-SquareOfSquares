@@ -35,7 +35,7 @@ export class SquaresService {
       return new ResponseDto(squareDto, false)
     }else{
       // TODO: save logs of erros
-      const notFound = new ResponseDto({message: `Square X:${x} Y:${y} does not belong to any territory.`})
+      const notFound = new ResponseDto({message: `Square X:${x} Y:${y} does not belong to any territory.`}, true)
       throw new NotFoundException(notFound)
     }
   }
@@ -52,7 +52,7 @@ export class SquaresService {
     const territory = await this.findTerritoryContaningSquare(x,y)
     if(!territory){
       // TODO: save logs of erros
-      const notFound = new ResponseDto({message: `Can't paint a Square (${x}, ${y}) that does not belong to any territory.`})
+      const notFound = new ResponseDto({message: `Can't paint a Square (${x}, ${y}) because it does not belong to any territory.`},true)
       throw new NotFoundException(notFound)
     }
 
