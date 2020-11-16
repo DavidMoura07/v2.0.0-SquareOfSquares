@@ -7,6 +7,7 @@ import { territoryProviders } from './providers/territory.providers';
 @Module({
   controllers: [TerritoriesController],
   providers: [TerritoriesService, ...territoryProviders],
+  exports: [...territoryProviders],
   imports: [DatabaseModule]
 })
 export class TerritoriesModule {}

@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { constants } from 'src/constants'
+import { constants } from 'src/utils/constants'
+import { Square } from 'src/squares/entities/square.entity'
 import { Repository } from 'typeorm'
 import { CreateTerritoryDto } from './dto/create-territory.dto'
 import { UpdateTerritoryDto } from './dto/update-territory.dto'
@@ -105,5 +106,22 @@ export class TerritoriesService {
 
   private _print(word: any): void {
     console.log(word)
+  }
+
+  async getPaintedArea(id: number){
+    return this.territoryRepository.createQueryBuilder('territory')
+    .select("COUNT(*)", "painted_area")
+    .innerJoin(Square, 's', 's.territory = territory.id')
+    .where('territory.id = :id', {id})
+    .getRawOne()
+    .then(area => +area.painted_area)
+  }
+
+  async getPaintedSquares(id: number){
+    return this.territoryRepository.createQueryBuilder('territory')
+    .select("s.startX AS x, s.startY AS y")
+    .innerJoin(Square, 's', 's.territory = territory.id')
+    .where('territory.id = :id', {id})
+    .getRawMany()
   }
 }

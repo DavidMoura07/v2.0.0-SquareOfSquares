@@ -1,6 +1,6 @@
 import { Connection } from 'typeorm';
 import { Territory } from '../entities/territory.entity';
-import { constants } from '../../constants';
+import { constants } from '../../utils/constants';
 
 export const territoryProviders = [
   {

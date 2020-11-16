@@ -10,13 +10,13 @@ export class TerritoryResponseDto {
     readonly painted_area: number
     readonly painted_squares?: PointDto[]
 
-    constructor(territory: Territory, painted_squares?: PointDto[]){
+    constructor(territory: Territory, painted_area?: number, painted_squares?: PointDto[]){
         this.id = territory.id
         this.name = territory.name
         this.start = new PointDto(territory.startX, territory.startY)
         this.end = new PointDto(territory.endX, territory.endY)
         this.area = this._calculateArea(territory)
-        this.painted_area = 0
+        this.painted_area = painted_area || 0
         if(painted_squares){
             this.painted_squares = painted_squares
         }

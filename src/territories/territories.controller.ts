@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Put, Param, Delete, UnprocessableEntityException, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Put, Param, Delete, UnprocessableEntityException, NotFoundException, Query } from '@nestjs/common';
 import { TerritoriesService } from './territories.service';
 import { CreateTerritoryDto } from './dto/create-territory.dto';
 import { UpdateTerritoryDto } from './dto/update-territory.dto';
@@ -47,8 +47,11 @@ export class TerritoriesController {
   async findAll() {
     try{
       const territories = await this.territoriesService.findAll()
-      const resTerritories = territories.map(territory => new TerritoryResponseDto(territory))
-      return new ResponseDto(resTerritories)
+      const resTerritories = territories.map(async territory => {
+        const paintedArea = await this.territoriesService.getPaintedArea(territory.id)
+        return new TerritoryResponseDto(territory, paintedArea)
+      })
+      return new ResponseDto(await Promise.all(resTerritories))
 
     } catch (e){
       const message = new ResponseDto({message: e.message, stack: e.stack}, true)
@@ -72,13 +75,18 @@ export class TerritoriesController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string, @Query('withpainted') withpainted: boolean) {
     try{
       const territory = await this.territoriesService.findOne(+id)
       if(!territory){
         throw new Error(`Territory ID ${id} not found`)
       }
-      const resTerritories =  new TerritoryResponseDto(territory)
+      const paintedArea = await this.territoriesService.getPaintedArea(+id)
+      let paintedSquares = null
+      if(withpainted){
+        paintedSquares = await this.territoriesService.getPaintedSquares(+id)
+      }
+      const resTerritories =  new TerritoryResponseDto(territory, paintedArea, paintedSquares)
       return new ResponseDto(resTerritories)
     } catch (e){
       const message = new ResponseDto({message: e.message, stack: e.stack}, true)

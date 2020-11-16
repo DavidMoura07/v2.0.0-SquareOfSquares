@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Square } from 'src/squares/entities/square.entity';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { CreateTerritoryDto } from '../dto/create-territory.dto'
 import { UpdateTerritoryDto } from '../dto/update-territory.dto';
 
@@ -40,5 +41,8 @@ export class Territory {
 
     @Column({name: 'END_Y', type: 'int'})
     endY: number
+
+    @OneToMany(() => Square, square => square.territory)
+    squares: Square[];
     
 }
