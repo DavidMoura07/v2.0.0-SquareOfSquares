@@ -2,10 +2,8 @@ import { Inject, Injectable } from '@nestjs/common'
 import { constants } from 'src/constants'
 import { Repository } from 'typeorm'
 import { CreateTerritoryDto } from './dto/create-territory.dto'
-import { TerritoryResponseDto } from './dto/territory-response.dto'
 import { UpdateTerritoryDto } from './dto/update-territory.dto'
 import { Territory } from './entities/territory.entity'
-import { ResponseDto } from '../utils/dto/response.dto'
 
 @Injectable()
 export class TerritoriesService {
@@ -17,6 +15,7 @@ export class TerritoriesService {
 
 
   async create(createTerritoryDto: CreateTerritoryDto): Promise<Territory> {
+    // createTerritoryDto.validate()
     const isOverlapping = await this._checkOverlay(createTerritoryDto)
     if(isOverlapping){
       throw new Error("Overlapping detected!")
@@ -44,6 +43,19 @@ export class TerritoriesService {
     return this.territoryRepository.delete({id})
   }
 
+  getTerritoryOverlay(){
+    return `list of territories that overlaps another`
+  }
+
+  getIncompleteData(){
+    return `list of territories with incomplete data`
+  }
+
+  getNotFound(){
+    return `list of territories not founded`
+  }
+
+
 // // saber se a base inferior (xi,yi | xf,yi) ou a superior (xi,yf | xf,yf) invade algum território, se a base colide então a coluna colide
 // WHERE ( YI <= yi < YF ) OR (YI < yf <= YF ) // a altura tá dentro 
 // AND ( 
@@ -57,7 +69,7 @@ export class TerritoriesService {
 //     ) 
 // )
 
-  async _checkOverlay(territoryDto: CreateTerritoryDto): Promise<boolean>{
+  private async _checkOverlay(territoryDto: CreateTerritoryDto): Promise<boolean>{
     const territoryOverlapped = await this.territoryRepository
     .createQueryBuilder('territory')
     .where(`
@@ -85,14 +97,13 @@ export class TerritoriesService {
       } 
     ).getMany();
     if(territoryOverlapped.length > 0){
-      // TODO: save errors log
       return true
     }else{
       return false;
     }
   }
 
-  _print(word: any): void {
+  private _print(word: any): void {
     console.log(word)
   }
 }

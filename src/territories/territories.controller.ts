@@ -16,27 +16,10 @@ export class TerritoriesController {
       const terrotoryRespose = new TerritoryResponseDto(territory)
       return new ResponseDto(terrotoryRespose, false)
     } catch (e) {
+      // TODO: save errors log
       const message = new ResponseDto({message: e.message, stack: e.stack}, true)
       throw new UnprocessableEntityException(message)
     }
-  }
-
-  @Get()
-  async findAll() {
-    try{
-      const territories = await this.territoriesService.findAll()
-      const resTerritories = territories.map(territory => new TerritoryResponseDto(territory))
-      return new ResponseDto(resTerritories, false)
-
-    } catch (e){
-      const message = new ResponseDto({message: e.message, stack: e.stack}, true)
-      throw new NotFoundException(message)
-    }
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.territoriesService.findOne(+id);
   }
 
   @Put(':id')
@@ -45,7 +28,61 @@ export class TerritoriesController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.territoriesService.remove(+id);
+  async remove(@Param('id') id: string) {
+    try{
+      const response = await this.territoriesService.remove(+id);
+      if(response.affected === 0){
+        // TODO: Save error info at db
+        throw new Error(`Territory ID ${id} not found`)
+      }
+      return new ResponseDto(null, false)
+    }catch (e){
+      console.log(e)
+      const message = new ResponseDto({message: e.message, stack: e.stack} , true)
+      throw new NotFoundException(message)
+    }
+  }
+
+  @Get()
+  async findAll() {
+    try{
+      const territories = await this.territoriesService.findAll()
+      const resTerritories = territories.map(territory => new TerritoryResponseDto(territory))
+      return new ResponseDto(resTerritories)
+
+    } catch (e){
+      const message = new ResponseDto({message: e.message, stack: e.stack}, true)
+      throw new NotFoundException(message)
+    }
+  }
+
+  @Get('territory-overlay')
+  async getTerrotoryOverlay(){
+    return this.territoriesService.getTerritoryOverlay()
+  }
+
+  @Get('incomplete-data')
+  async getIncompleteData(){
+    return this.territoriesService.getIncompleteData()
+  }
+
+  @Get('not-found')
+  async getNotFound(){
+    return this.territoriesService.getNotFound()
+  }
+
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    try{
+      const territory = await this.territoriesService.findOne(+id)
+      if(!territory){
+        throw new Error(`Territory ID ${id} not found`)
+      }
+      const resTerritories =  new TerritoryResponseDto(territory)
+      return new ResponseDto(resTerritories)
+    } catch (e){
+      const message = new ResponseDto({message: e.message, stack: e.stack}, true)
+      throw new NotFoundException(message)
+    }
   }
 }
