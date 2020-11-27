@@ -29,7 +29,7 @@ services:
     build: .
     command: npm start
     ports:
-      - '8888:8888'
+      - '8888'
     depends_on:
       - reverseproxy
       - postgres
