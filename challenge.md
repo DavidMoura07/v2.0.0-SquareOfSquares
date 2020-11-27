@@ -163,7 +163,7 @@ We can get the error:
 | Infrastructure 2.0 Update: *Lets secure it a bit* |
 | :---: |
 | Create a reverse-proxy service to separate de requests from the server. Make it listen to the port `80` and your application at `8888`. 
-| Take a chance to read and implement stuff like those written here: https://poweruphosting.com/blog/secure-nginx-server/ |
+| Take a chance to read and implement stuff like those written here: https://www.bogotobogo.com/DevOps/Docker/Docker-Compose-Nginx-Reverse-Proxy-Multiple-Containers.php |
 | We recomend `nginx` or `haproxy` for this step. Do not forget to keep their config file on your repository somehow. |
 
 ---
