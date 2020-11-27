@@ -1,7 +1,15 @@
-# Use postgres/example user/password credentials
 version: '3.7'
 
 services:
+  
+  reverseproxy:
+    build: ./nginx
+    ports: 
+      - '80:80'
+    volumes: 
+      - ./nginx/conf:/etc/nginx
+      - ./nginx/content:/usr/share/nginx/html
+
   postgres:
     image: postgres
     restart: always
@@ -14,30 +22,16 @@ services:
       - ./postgresql_data:/var/lib/postgresql/data
     ports:
       - 5432:5432
-    healthcheck:
-      test:
-        [
-          'CMD',
-          'pg_isready',
-          '-h',
-          'localhost',
-          '-p',
-          '5432',
-          '-d',
-          'squares',
-          '-U',
-          'userdocker',
-        ]
-      timeout: 3s
-      retries: 10
-      start_period: 20s
+    depends_on:
+      - reverseproxy
 
-  web:
+  api:
     build: .
     command: npm start
     ports:
       - '8888:8888'
     depends_on:
+      - reverseproxy
       - postgres
     environment:
       DB_HOST: postgres
@@ -45,3 +39,4 @@ services:
       DB_PASSWORD: passdocker
       DB_SCHEMA: squares
       NODE_ENV: PROD
+  
