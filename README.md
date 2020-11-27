@@ -24,6 +24,16 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
+## Running with docker
+
+Using command below you will run the application with 3 instances managed by nginx load balancer
+
+```bash
+docker-compose up --scale api=3
+```
+
+You can access docs of the application at [localhost/docs](http://localhost/docs)
+
 ## Description
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
