@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
+import { DatabaseModule } from 'src/database/database.module';
 import { ErrorsService } from './errors.service';
-import { ErrorsController } from './errors.controller';
+import { errorProviders } from './providers/error.providers';
 
 @Module({
-  controllers: [ErrorsController],
-  providers: [ErrorsService]
+  providers: [...errorProviders, ErrorsService],
+  exports: [...errorProviders, ErrorsService],
+  imports: [DatabaseModule]
 })
 export class ErrorsModule {}

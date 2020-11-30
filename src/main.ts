@@ -1,9 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { ValidationPipe } from '@nestjs/common';
-
-declare const module: any;
+import { ValidationError, ValidationPipe } from '@nestjs/common';
+import { FormatResponse } from './interceptors/format-response.interceptor';
+import { IncompleteDataException } from './errors/incomplete-data.exception';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -20,9 +20,11 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
+      exceptionFactory: (errors: ValidationError[]) => new IncompleteDataException(errors),
     }),
-  );
+  ).useGlobalInterceptors(new FormatResponse());
 
   await app.listen(8888);
+  console.log("Listening on port 8888")
 }
 bootstrap();

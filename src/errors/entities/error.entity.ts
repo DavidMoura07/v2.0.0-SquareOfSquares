@@ -1,12 +1,24 @@
 import { ResponseDto } from "src/utils/dto/response.dto"
-import { Domain } from "./domain-erro.entity"
-import { TypeError } from "./type-error.entity"
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
 
-export class Error {
+@Entity()
+export class ErrorEntity {
+    
+    @PrimaryGeneratedColumn({name: "ID"})
     id: number
+    
+    @Column({name: "TIMESTAMP", type: "timestamp", default: new Date()})
     dateTime: Date
-    type: TypeError
-    domain: Domain
+
+    @Column({name: "TYPE", type: "text", nullable: false})
+    type: TypesStrings
+
+    @Column({name: "DOMAIN", type: "text", nullable: false})
+    domain: DomainsStrings
+    
+    @Column({name: "MESSAGE", type:"text"})
     message: string
+
+    @Column({name: "DATA", type: "json", nullable: true})
     data: ResponseDto
 }

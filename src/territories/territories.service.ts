@@ -16,7 +16,6 @@ export class TerritoriesService {
 
 
   async create(createTerritoryDto: CreateTerritoryDto): Promise<Territory> {
-    // createTerritoryDto.validate()
     const isOverlapping = await this._checkOverlay(createTerritoryDto)
     if(isOverlapping){
       throw new Error("Overlapping detected!")

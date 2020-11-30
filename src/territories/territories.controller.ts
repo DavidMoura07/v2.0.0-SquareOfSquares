@@ -4,21 +4,21 @@ import { CreateTerritoryDto } from './dto/create-territory.dto';
 import { UpdateTerritoryDto } from './dto/update-territory.dto';
 import { ResponseDto } from 'src/utils/dto/response.dto';
 import { TerritoryResponseDto } from './dto/territory-response.dto';
+import { ErrorsService } from 'src/errors/errors.service';
 
 @Controller('territories')
 export class TerritoriesController {
-  constructor(private readonly territoriesService: TerritoriesService) {}
+  constructor(
+    private readonly territoriesService: TerritoriesService,
+    private readonly errorsService: ErrorsService
+    ) {}
 
   @Post()
   async create(@Body() createTerritoryDto: CreateTerritoryDto) {
     try{
-      const territory = await this.territoriesService.create(createTerritoryDto)
-      const terrotoryRespose = new TerritoryResponseDto(territory)
-      return new ResponseDto(terrotoryRespose, false)
+      return await this.territoriesService.create(createTerritoryDto)
     } catch (e) {
-      // TODO: save errors log
-      const message = new ResponseDto({message: e.message, stack: e.stack}, true)
-      throw new UnprocessableEntityException(message)
+      throw new UnprocessableEntityException({message: e.message, stack: e.stack})
     }
   }
 
@@ -32,8 +32,9 @@ export class TerritoriesController {
     try{
       const response = await this.territoriesService.remove(+id);
       if(response.affected === 0){
-        // TODO: Save error info at db
-        throw new Error(`Territory ID ${id} not found`)
+        const message = `Territory ID ${id} not found`
+        this.errorsService.registerError(message, ErrorsTypes.NOT_FOUND, Domains.TERRITORY)
+        throw new NotFoundException(message)
       }
       return new ResponseDto(null, false)
     }catch (e){
@@ -51,11 +52,11 @@ export class TerritoriesController {
         const paintedArea = await this.territoriesService.getPaintedArea(territory.id)
         return new TerritoryResponseDto(territory, paintedArea)
       })
-      return new ResponseDto(await Promise.all(resTerritories))
+      return await Promise.all(resTerritories)
 
     } catch (e){
-      const message = new ResponseDto({message: e.message, stack: e.stack}, true)
-      throw new NotFoundException(message)
+      // this.errorsService.registerError(message, e.message, ErrorsTypes.NOT_FOUND, Domains.TERRITORY)
+      throw new NotFoundException({message: e.message, stack: e.stack})
     }
   }
 
@@ -89,7 +90,8 @@ export class TerritoriesController {
       const resTerritories =  new TerritoryResponseDto(territory, paintedArea, paintedSquares)
       return new ResponseDto(resTerritories)
     } catch (e){
-      const message = new ResponseDto({message: e.message, stack: e.stack}, true)
+      const message = {message: e.message, stack: e.stack}
+      this.errorsService.registerError(e.message, ErrorsTypes.NOT_FOUND, Domains.TERRITORY, message)
       throw new NotFoundException(message)
     }
   }
