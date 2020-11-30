@@ -2,8 +2,11 @@ version: '3.7'
 
 services:
   
-  reverseproxy:
-    build: ./nginx
+  nginx:
+    container_name: nginx
+    build: 
+      context: "./nginx"
+      dockerfile: "Dockerfile"
     ports: 
       - '80:80'
     volumes: 
@@ -11,6 +14,7 @@ services:
       - ./nginx/content:/usr/share/nginx/html
 
   postgres:
+    container_name: postgres
     image: postgres
     restart: always
     environment:
@@ -23,15 +27,18 @@ services:
     ports:
       - 5432:5432
     depends_on:
-      - reverseproxy
+      - nginx
 
-  api:
-    build: .
+  app:
+    container_name: application
+    build: 
+      context: "."
+      dockerfile: "Dockerfile"
     command: npm start
     ports:
       - '8888'
     depends_on:
-      - reverseproxy
+      - nginx
       - postgres
     environment:
       DB_HOST: postgres
