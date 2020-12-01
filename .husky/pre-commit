@@ -2,7 +2,7 @@
 . "$(dirname $0)/_/husky.sh"
 
 # validating commit message
-npx --no-install commitlint --edit 
+npx --no-install commitlint --edit $1
 
 # running tests
 # npm test
