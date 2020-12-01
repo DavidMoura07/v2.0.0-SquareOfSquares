@@ -1,5 +1,5 @@
 import { Territory } from 'src/territories/entities/territory.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, PrimaryColumn } from 'typeorm';
+import { Entity, ManyToOne, JoinColumn, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export class Square {

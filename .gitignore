@@ -32,3 +32,10 @@ lerna-debug.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# Sonar scanner
+.scannerwork
+
+# DB Volumes
+postgresql
+postgresql_data
