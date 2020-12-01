@@ -1,6 +1,11 @@
 #!/bin/sh
 . "$(dirname $0)/_/husky.sh"
 
-npx --no-install commitlint --edit $1
+# validating commit message
+npx --no-install commitlint --edit 
 
+# running tests
 # npm test
+
+# enable to test
+# exit 1
